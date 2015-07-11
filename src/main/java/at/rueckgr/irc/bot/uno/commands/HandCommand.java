@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HandCommand implements Command {
+    private static final String COMMAND = "hand_info";
+
     @Override
     public String handle(UnoState unoState, JSONObject object) {
         if(!object.containsKey("hand")) {
@@ -40,5 +42,10 @@ public class HandCommand implements Command {
         unoState.setHand(currentHand);
 
         return null;
+    }
+
+    @Override
+    public String getCommand() {
+        return COMMAND;
     }
 }

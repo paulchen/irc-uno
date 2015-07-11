@@ -5,10 +5,8 @@ import at.rueckgr.irc.bot.uno.UnoHelper;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.json.simple.JSONObject;
 
-import java.util.Random;
-
 public class PlayerDrewCommand implements Command {
-    private Random random = new Random();
+    private static final String COMMAND = "player_drew_card";
 
     @Override
     public String handle(UnoState unoState, JSONObject object) {
@@ -31,5 +29,10 @@ public class PlayerDrewCommand implements Command {
             return "!pass";
         }
         return playerCommand;
+    }
+
+    @Override
+    public String getCommand() {
+        return COMMAND;
     }
 }

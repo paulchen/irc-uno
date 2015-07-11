@@ -6,6 +6,8 @@ import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.json.simple.JSONObject;
 
 public class CurrentCardCommand implements Command {
+    private static final String COMMAND = "current_card";
+
     @Override
     public String handle(UnoState unoState, JSONObject object) {
         if(!object.containsKey("current_card")) {
@@ -23,5 +25,10 @@ public class CurrentCardCommand implements Command {
         }
 
         return null;
+    }
+
+    @Override
+    public String getCommand() {
+        return COMMAND;
     }
 }

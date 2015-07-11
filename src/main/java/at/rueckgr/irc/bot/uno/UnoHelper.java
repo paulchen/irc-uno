@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class UnoHelper {
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     public static Card cardFromString(String cardString) {
         String[] parts = cardString.split(" ");
@@ -66,7 +66,7 @@ public class UnoHelper {
         return result;
     }
 
-    public static Color getRandomColor() {
+    private static Color getRandomColor() {
         return Color.values()[random.nextInt(4)];
     }
 

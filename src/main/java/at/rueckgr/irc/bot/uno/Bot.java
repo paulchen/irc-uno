@@ -1,25 +1,22 @@
 package at.rueckgr.irc.bot.uno;
 
 import at.rueckgr.irc.bot.uno.commands.Command;
-import at.rueckgr.irc.bot.uno.commands.CurrentCardCommand;
-import at.rueckgr.irc.bot.uno.commands.CurrentOrderCommand;
-import at.rueckgr.irc.bot.uno.commands.HandCommand;
-import at.rueckgr.irc.bot.uno.commands.PlayerDrewCommand;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.jibble.pircbot.PircBot;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Bot extends PircBot {
 
-    public static final String NAME = "testbot";
+    public static final String NAME = "unobot";
 
     private static final String NETWORK = "irc.rueckgr.at";
-    private static final String CHANNEL = "#test";
+    private static final String CHANNEL = "#irc";
     private static final String BOT_NAME = "GamingPrincessLuna";
     private static final String JOIN_COMMAND = "?join";
     private static final String LEAVE_COMMAND = "?leave";
@@ -37,10 +34,11 @@ public class Bot extends PircBot {
         jsonParser = new JSONParser();
 
         commands = new HashMap<>();
-        commands.put("hand_info", new HandCommand());
-        commands.put("current_card", new CurrentCardCommand());
-        commands.put("current_player_order", new CurrentOrderCommand());
-        commands.put("player_drew_card", new PlayerDrewCommand());
+        Reflections reflections = new Reflections(Command.class.getPackage().getName());
+        for (Class<? extends Command> commandClass : reflections.getSubTypesOf(Command.class)) {
+            Command commandObject = commandClass.newInstance();
+            commands.put(commandObject.getCommand(), commandObject);
+        }
 
         unoState = new UnoState();
     }
@@ -89,10 +87,12 @@ public class Bot extends PircBot {
             }
 
             Object event = jsonObject.get("event");
+            //noinspection SuspiciousMethodCalls
             if(!commands.containsKey(event)) {
                 return;
             }
 
+            //noinspection SuspiciousMethodCalls
             String result = commands.get(event).handle(unoState, jsonObject);
             if(result != null) {
                 sendMessage(CHANNEL, result);

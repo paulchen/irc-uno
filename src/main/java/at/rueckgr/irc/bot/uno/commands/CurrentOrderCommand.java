@@ -6,10 +6,9 @@ import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.json.simple.JSONObject;
 
 import java.util.List;
-import java.util.Random;
 
 public class CurrentOrderCommand implements Command {
-    private Random random = new Random();
+    private static final String COMMAND = "current_player_order";
 
     @Override
     public String handle(UnoState unoState, JSONObject object) {
@@ -40,5 +39,10 @@ public class CurrentOrderCommand implements Command {
             return "!draw";
         }
         return playCommand;
+    }
+
+    @Override
+    public String getCommand() {
+        return COMMAND;
     }
 }

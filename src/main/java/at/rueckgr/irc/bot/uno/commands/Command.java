@@ -5,4 +5,6 @@ import org.json.simple.JSONObject;
 
 public interface Command {
     String handle(UnoState unoState, JSONObject object);
+
+    String getCommand();
 }

@@ -1,5 +1,11 @@
 package at.rueckgr.irc.bot.uno.model;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public enum CardType {
     ZERO("ZERO", "0"),
     ONE("ONE", "1"),
@@ -19,11 +25,6 @@ public enum CardType {
 
     private final String longName;
     private final String shortName;
-
-    CardType(final String longName, final String shortName) {
-        this.longName = longName;
-        this.shortName = shortName;
-    }
 
     public String getLongName() {
         return longName;
