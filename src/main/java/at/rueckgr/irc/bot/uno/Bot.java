@@ -16,10 +16,10 @@ import java.util.Map;
 
 public class Bot extends PircBot {
 
-    public static final String NAME = "unobot";
+    public static final String NAME = "testbot";
 
     private static final String NETWORK = "irc.rueckgr.at";
-    private static final String CHANNEL = "#uno";
+    private static final String CHANNEL = "#test";
     private static final String BOT_NAME = "GamingPrincessLuna";
     private static final String JOIN_COMMAND = "?join";
     private static final String LEAVE_COMMAND = "?leave";

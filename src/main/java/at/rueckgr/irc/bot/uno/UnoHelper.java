@@ -52,7 +52,7 @@ public class UnoHelper {
         List<Card> result = new ArrayList<>();
 
         for (Card card : currentHand) {
-            if(card.getColor().isWildcard()) {
+            if(card.isWildcard()) {
                 result.add(card);
             }
             else if(card.getColor().equals(currentCard.getColor())) {
@@ -79,7 +79,7 @@ public class UnoHelper {
         Card selectedCard = compatibleCards.get(random.nextInt(compatibleCards.size()));
 
         String cardName;
-        if(selectedCard.getColor().isWildcard()) {
+        if(selectedCard.isWildcard()) {
             cardName = selectedCard.getCardType().getLongName() + " " + UnoHelper.getRandomColor().getLongName();
         }
         else {
