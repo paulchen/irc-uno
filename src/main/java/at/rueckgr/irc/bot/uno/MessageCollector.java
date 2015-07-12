@@ -21,11 +21,6 @@ public class MessageCollector {
     }
 
     public void collect(String input) {
-        if(!input.startsWith("###   ")) {
-            return;
-        }
-        input = input.substring(6);
-
         if(messagesReceived > 0 && messagesReceived < messagesCount) {
             message = message + input;
             messagesReceived++;
