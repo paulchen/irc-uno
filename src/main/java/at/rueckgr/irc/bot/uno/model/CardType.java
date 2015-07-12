@@ -25,12 +25,4 @@ public enum CardType {
 
     private final String longName;
     private final String shortName;
-
-    public String getLongName() {
-        return longName;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
 }
