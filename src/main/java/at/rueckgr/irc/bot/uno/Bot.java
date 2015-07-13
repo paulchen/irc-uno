@@ -56,6 +56,9 @@ public class Bot extends PircBot {
             if(LEAVE_COMMAND.equalsIgnoreCase(message)) {
                 sendMessage(CHANNEL, "!leave");
             }
+            if((LEAVE_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
+                sendMessage(CHANNEL, "!leave");
+            }
         }
     }
 
