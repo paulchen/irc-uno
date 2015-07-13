@@ -11,8 +11,10 @@ import java.util.Map;
 
 public class Bot extends PircBot {
 
+    // TODO use name reported by PircBot
     public static final String NAME = "unobot";
 
+    // TODO use properties
     private static final String NETWORK = "irc.rueckgr.at";
     private static final String CHANNEL = "#uno";
     private static final String BOT_NAME = "GamingPrincessLuna";
