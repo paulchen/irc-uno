@@ -21,9 +21,10 @@ public class Bot extends PircBot {
     private static final String JOIN_COMMAND = "?join";
     private static final String LEAVE_COMMAND = "?leave";
 
-    private Map<String, Command> commands;
-    private UnoState unoState;
-    private MessageCollector messageCollector;
+    private final Map<String, Command> commands;
+    private final UnoState unoState;
+    private final MessageCollector messageCollector;
+    private final LastActivityTracker lastActivityTracker;
 
     public Bot() throws Exception {
         setName(NAME);
@@ -41,11 +42,17 @@ public class Bot extends PircBot {
         }
 
         unoState = new UnoState();
+
+        lastActivityTracker = new LastActivityTracker();
+
+        new ActivityScheduler(this, lastActivityTracker).run();
     }
 
     @Override
     protected void onMessage(String channel, String sender, String login, String hostname, String message) {
         if(CHANNEL.equals(channel)) {
+            lastActivityTracker.recordActivity();
+
             if(message != null) {
                 message = message.trim();
             }
@@ -92,5 +99,21 @@ public class Bot extends PircBot {
                 sendMessage(CHANNEL, result);
             }
         }
+    }
+
+    public void startGame() {
+        lastActivityTracker.recordActivity();
+
+        sendMessage(CHANNEL, "!uno +a +e");
+        sendMessage(CHANNEL, "?join");
+        try {
+            Thread.sleep(5000);
+        }
+        catch (InterruptedException e) {
+            /* ignore */
+        }
+        sendMessage(CHANNEL, "!deal");
+        sendMessage(CHANNEL, "!leave");
+        sendMessage(CHANNEL, "!botjoin");
     }
 }
