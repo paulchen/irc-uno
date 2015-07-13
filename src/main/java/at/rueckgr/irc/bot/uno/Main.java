@@ -10,10 +10,12 @@ public class Main {
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.equalsIgnoreCase("quit")) {
-                bot.quitServer("So long and thanks for all the fish!");
-                Thread.sleep(5000);
-                System.exit(0); // TODO srsly?
+                break;
             }
         }
+
+        bot.quitServer("So long and thanks for all the fish!");
+        Thread.sleep(5000);
+        System.exit(0); // TODO srsly?
     }
 }
