@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 public class LastActivityTracker {
-    private static final int MIN_SECONDS = 3600*5;
-    private static final int MAX_SECONDS = 3600*14;
+    private static final int MIN_SECONDS = 3600*3;
+    private static final int MAX_SECONDS = 3600*9;
 
     private LocalDateTime lastActivity;
     private LocalDateTime nextActivity;
