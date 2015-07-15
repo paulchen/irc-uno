@@ -4,7 +4,8 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        Bot bot = new Bot();
+        BotThread botThread = new BotThread();
+        new Thread(botThread).start();
 
         Scanner scanner = new Scanner(System.in);
         while(scanner.hasNextLine()) {
@@ -14,8 +15,6 @@ public class Main {
             }
         }
 
-        bot.quitServer("So long and thanks for all the fish!");
-        Thread.sleep(5000);
-        System.exit(0); // TODO srsly?
+        botThread.quit();
     }
 }

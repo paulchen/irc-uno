@@ -12,11 +12,11 @@ import java.util.Map;
 public class Bot extends PircBot {
 
     // TODO use name reported by PircBot
-    public static final String NAME = "unobot";
+    public static final String NAME = "blubb";
 
     // TODO use properties
     private static final String NETWORK = "irc.rueckgr.at";
-    private static final String CHANNEL = "#uno";
+    private static final String CHANNEL = "#bla";
     private static final String BOT_NAME = "GamingPrincessLuna";
     private static final String JOIN_COMMAND = "?join";
     private static final String LEAVE_COMMAND = "?leave";
@@ -25,27 +25,27 @@ public class Bot extends PircBot {
     private final UnoState unoState;
     private final MessageCollector messageCollector;
     private final LastActivityTracker lastActivityTracker;
+    private ActivityScheduler activityScheduler;
 
-    public Bot() throws Exception {
-        setName(NAME);
-        setVerbose(true);
-        connect(NETWORK);
-        joinChannel(CHANNEL);
-
+    public Bot() {
         messageCollector = new MessageCollector();
 
         commands = new HashMap<>();
         Reflections reflections = new Reflections(Command.class.getPackage().getName());
         for (Class<? extends Command> commandClass : reflections.getSubTypesOf(Command.class)) {
-            Command commandObject = commandClass.newInstance();
-            commands.put(commandObject.getCommand(), commandObject);
+            Command commandObject = null;
+            try {
+                commandObject = commandClass.newInstance();
+                commands.put(commandObject.getCommand(), commandObject);
+            }
+            catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         unoState = new UnoState();
 
         lastActivityTracker = new LastActivityTracker();
-
-        new ActivityScheduler(this, lastActivityTracker).run();
     }
 
     @Override
@@ -115,5 +115,21 @@ public class Bot extends PircBot {
         sendMessage(CHANNEL, "!deal");
         sendMessage(CHANNEL, "!leave");
         sendMessage(CHANNEL, "!botjoin");
+    }
+
+    public void run() throws Exception {
+        setName(NAME);
+        setVerbose(true);
+        connect(NETWORK);
+        joinChannel(CHANNEL);
+
+        activityScheduler = new ActivityScheduler(this, lastActivityTracker);
+        activityScheduler.start();
+    }
+
+    @Override
+    public synchronized void dispose() {
+        activityScheduler.interrupt();
+        super.dispose();
     }
 }

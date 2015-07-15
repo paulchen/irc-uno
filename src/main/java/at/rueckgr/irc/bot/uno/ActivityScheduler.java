@@ -9,22 +9,20 @@ public class ActivityScheduler extends Thread {
     public ActivityScheduler(Bot bot, LastActivityTracker lastActivityTracker) {
         this.bot = bot;
         this.lastActivityTracker = lastActivityTracker;
-
-        setDaemon(true);
     }
 
     public void run() {
-        while(true) {
-            try {
-                Thread.sleep(SLEEP_TIME_MILLIS);
-            }
-            catch (InterruptedException e) {
-                /* nothing to do */
-            }
+        try {
+            while(!interrupted()) {
+                sleep(SLEEP_TIME_MILLIS);
 
-            if(lastActivityTracker.isActivityNecessary()) {
-                bot.startGame();
+                if(lastActivityTracker.isActivityNecessary()) {
+                    bot.startGame();
+                }
             }
+        }
+        catch (InterruptedException e) {
+            /* nothing to do */
         }
     }
 }
