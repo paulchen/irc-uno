@@ -7,7 +7,7 @@ import org.json.simple.JSONObject;
 
 import java.util.List;
 
-public class CurrentOrderCommand implements Command {
+public class CurrentOrderEvent implements Event {
     private static final String COMMAND = "current_player_order";
 
     @Override

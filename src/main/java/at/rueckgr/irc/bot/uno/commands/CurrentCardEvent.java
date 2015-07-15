@@ -5,7 +5,7 @@ import at.rueckgr.irc.bot.uno.model.Card;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.json.simple.JSONObject;
 
-public class CurrentCardCommand implements Command {
+public class CurrentCardEvent implements Event {
     private static final String COMMAND = "current_card";
 
     @Override

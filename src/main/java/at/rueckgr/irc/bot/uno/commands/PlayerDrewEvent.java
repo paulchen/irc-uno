@@ -5,7 +5,7 @@ import at.rueckgr.irc.bot.uno.UnoHelper;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.json.simple.JSONObject;
 
-public class PlayerDrewCommand implements Command {
+public class PlayerDrewEvent implements Event {
     private static final String COMMAND = "player_drew_card";
 
     @Override

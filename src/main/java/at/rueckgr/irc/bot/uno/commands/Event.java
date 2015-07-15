@@ -3,7 +3,7 @@ package at.rueckgr.irc.bot.uno.commands;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.json.simple.JSONObject;
 
-public interface Command {
+public interface Event {
     String handle(UnoState unoState, JSONObject object);
 
     String getCommand();

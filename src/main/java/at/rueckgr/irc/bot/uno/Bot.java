@@ -1,6 +1,6 @@
 package at.rueckgr.irc.bot.uno;
 
-import at.rueckgr.irc.bot.uno.commands.Command;
+import at.rueckgr.irc.bot.uno.commands.Event;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.jibble.pircbot.PircBot;
 import org.json.simple.JSONObject;
@@ -21,7 +21,7 @@ public class Bot extends PircBot {
     private static final String JOIN_COMMAND = "?join";
     private static final String LEAVE_COMMAND = "?leave";
 
-    private final Map<String, Command> commands;
+    private final Map<String, Event> commands;
     private final UnoState unoState;
     private final MessageCollector messageCollector;
     private final LastActivityTracker lastActivityTracker;
@@ -31,12 +31,12 @@ public class Bot extends PircBot {
         messageCollector = new MessageCollector();
 
         commands = new HashMap<>();
-        Reflections reflections = new Reflections(Command.class.getPackage().getName());
-        for (Class<? extends Command> commandClass : reflections.getSubTypesOf(Command.class)) {
-            Command commandObject = null;
+        Reflections reflections = new Reflections(Event.class.getPackage().getName());
+        for (Class<? extends Event> commandClass : reflections.getSubTypesOf(Event.class)) {
+            Event eventObject = null;
             try {
-                commandObject = commandClass.newInstance();
-                commands.put(commandObject.getCommand(), commandObject);
+                eventObject = commandClass.newInstance();
+                commands.put(eventObject.getCommand(), eventObject);
             }
             catch (ReflectiveOperationException e) {
                 throw new RuntimeException(e);

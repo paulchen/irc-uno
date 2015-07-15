@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HandCommand implements Command {
+public class HandEvent implements Event {
     private static final String COMMAND = "hand_info";
 
     @Override
