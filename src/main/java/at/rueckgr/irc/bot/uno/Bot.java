@@ -20,6 +20,7 @@ public class Bot extends PircBot {
     private static final String BOT_NAME = "GamingPrincessLuna";
     private static final String JOIN_COMMAND = "?join";
     private static final String LEAVE_COMMAND = "?leave";
+    private static final String AUTOPLAY_COMMAND = "?autoplay";
 
     private final Map<String, Event> commands;
     private final UnoState unoState;
@@ -55,6 +56,9 @@ public class Bot extends PircBot {
 
             if(message != null) {
                 message = message.trim();
+            }
+            if(AUTOPLAY_COMMAND.equalsIgnoreCase(message)) {
+                startGame();
             }
             if(JOIN_COMMAND.equalsIgnoreCase(message)) {
                 sendMessage(CHANNEL, "!botjoin");
