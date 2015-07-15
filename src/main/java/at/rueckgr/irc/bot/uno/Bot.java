@@ -47,6 +47,8 @@ public class Bot extends PircBot {
         unoState = new UnoState();
 
         lastActivityTracker = new LastActivityTracker();
+
+        setMessageDelay(1L);
     }
 
     @Override
