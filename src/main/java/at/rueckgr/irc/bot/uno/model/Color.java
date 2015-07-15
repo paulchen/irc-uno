@@ -17,4 +17,8 @@ public enum Color {
 
     private final String longName;
     private final String shortName;
+
+    public boolean isWildcard() {
+        return WILD.equals(this);
+    }
 }

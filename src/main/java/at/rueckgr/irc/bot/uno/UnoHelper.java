@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Random;
 
 public class UnoHelper {
-    private static final Random random = new Random();
-
     public static Card cardFromString(String cardString) {
         String[] parts = cardString.split(" ");
         if(parts.length != 2) {
@@ -66,21 +64,17 @@ public class UnoHelper {
         return result;
     }
 
-    private static Color getRandomColor() {
-        return Color.values()[random.nextInt(4)];
-    }
-
     public static String createPlayCommand(UnoState unoState) {
         List<Card> compatibleCards = findCompatibleCards(unoState.getHand(), unoState.getCurrentCard());
         if(compatibleCards.isEmpty()) {
             return null;
         }
 
-        Card selectedCard = compatibleCards.get(random.nextInt(compatibleCards.size()));
+        Card selectedCard = UnoStrategy.chooseCard(unoState, compatibleCards);
 
         String cardName;
         if(selectedCard.isWildcard()) {
-            cardName = selectedCard.getCardType().getLongName() + " " + UnoHelper.getRandomColor().getLongName();
+            cardName = selectedCard.getCardType().getLongName() + " " + UnoStrategy.getWildcardColor(unoState).getLongName();
         }
         else {
             cardName = selectedCard.getLongName();

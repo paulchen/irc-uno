@@ -7,22 +7,23 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum CardType {
-    ZERO("ZERO", "0"),
-    ONE("ONE", "1"),
-    TWO("TWO", "2"),
-    THREE("THREE", "3"),
-    FOUR("FOUR", "4"),
-    FIVE("FIVE", "5"),
-    SIX("SIX", "6"),
-    SEVEN("SEVEN", "7"),
-    EIGHT("EIGHT", "8"),
-    NINE("NINE", "9"),
-    REVERSE("R", "R"),
-    DRAW2("D2", "D2"),
-    SKIP("S", "S"),
-    WILD("WILD", "W"),
-    WD4("WD4", "WD4");
+    ZERO("ZERO", "0", 0),
+    ONE("ONE", "1", 0),
+    TWO("TWO", "2", 0),
+    THREE("THREE", "3", 0),
+    FOUR("FOUR", "4", 0),
+    FIVE("FIVE", "5", 0),
+    SIX("SIX", "6", 0),
+    SEVEN("SEVEN", "7", 0),
+    EIGHT("EIGHT", "8", 0),
+    NINE("NINE", "9", 0),
+    REVERSE("R", "R", 1),
+    DRAW2("D2", "D2", 2),
+    SKIP("S", "S", 3),
+    WILD("WILD", "W", 0),
+    WD4("WD4", "WD4", 5);
 
     private final String longName;
     private final String shortName;
+    private final int evilness;
 }
