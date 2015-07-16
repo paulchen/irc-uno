@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -97,10 +98,15 @@ public class UnoStrategy {
 
     private static List<Color> getMostFrequentColor(List<Card> hand) {
         Map<Color, Long> map = hand.stream().filter(not(Card::isWildcard)).collect(Collectors.groupingBy(Card::getColor, Collectors.counting()));
+	if(map.isEmpty()) {
+		return new ArrayList<Color>();
+	}
         return getElementsWithLargestKeys(map);
     }
 
     private static <T, U extends Comparable<U>> List<T> getElementsWithLargestKeys(Map<T, U> map) {
+	Validate.notEmpty(map);
+
         U maximumNumber = map.values().stream().max(U::compareTo).get();
         return map.keySet().stream().filter(key -> map.get(key).equals(maximumNumber)).collect(Collectors.toList());
     }
