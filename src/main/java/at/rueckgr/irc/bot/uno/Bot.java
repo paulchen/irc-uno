@@ -120,6 +120,12 @@ public class Bot extends PircBot {
         }
         sendMessage(CHANNEL, "!deal");
         sendMessage(CHANNEL, "!leave");
+        try {
+            Thread.sleep(100);
+        }
+        catch (InterruptedException e) {
+            /* ignore */
+        }
         sendMessage(CHANNEL, "!botjoin");
     }
 
