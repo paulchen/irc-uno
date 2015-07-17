@@ -93,7 +93,7 @@ public class UnoStrategy {
     }
 
     private static List<Color> getNonWildcardColors() {
-        return Arrays.asList(Color.values()).stream().filter(Color::isWildcard).collect(Collectors.toList());
+        return Arrays.asList(Color.values()).stream().filter(not(Color::isWildcard)).collect(Collectors.toList());
     }
 
     private static List<Color> getMostFrequentColor(List<Card> hand) {
