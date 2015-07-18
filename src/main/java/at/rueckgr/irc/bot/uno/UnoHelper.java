@@ -7,7 +7,6 @@ import at.rueckgr.irc.bot.uno.model.UnoState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class UnoHelper {
     public static Card cardFromString(String cardString) {

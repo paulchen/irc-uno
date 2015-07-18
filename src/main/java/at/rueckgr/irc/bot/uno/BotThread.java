@@ -10,7 +10,8 @@ public class BotThread implements Runnable {
             bot.run();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            // TODO logging
+//            e.printStackTrace();
         }
     }
 
