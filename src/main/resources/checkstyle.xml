@@ -101,7 +101,7 @@
         <!-- See http://checkstyle.sf.net/config_naming.html -->
         <module name="ConstantName">
             <!-- Allow "log" as a constant - don't force LOG -->
-            <property name="format" value="^log$|^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+            <property name="format" value="^logger$|^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
         </module>
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>

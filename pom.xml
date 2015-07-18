@@ -12,11 +12,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- dependency versions -->
-        <pircbot.version>1.5.0</pircbot.version>
+        <pircbotx.version>2.0.1</pircbotx.version>
         <json-simple.version>1.1.1</json-simple.version>
         <lombok.version>1.16.4</lombok.version>
         <reflections.version>0.9.9-RC1</reflections.version>
         <commons-lang.version>3.4</commons-lang.version>
+        <slf4j-api.version>1.5.5</slf4j-api.version>
+        <slf4j-log4j.version>1.5.5</slf4j-log4j.version>
+        <log4j.version>1.2.17</log4j.version>
 
         <!-- compile-time dependency versions -->
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
@@ -27,9 +30,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>pircbot</groupId>
-            <artifactId>pircbot</artifactId>
-            <version>${pircbot.version}</version>
+            <groupId>org.pircbotx</groupId>
+            <artifactId>pircbotx</artifactId>
+            <version>${pircbotx.version}</version>
         </dependency>
 
         <dependency>
@@ -55,6 +58,24 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -74,6 +95,7 @@
                 <version>${exec-maven-plugin.version}</version>
                 <configuration>
                     <mainClass>at.rueckgr.irc.bot.uno.Main</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
                 </configuration>
             </plugin>
 

@@ -2,14 +2,21 @@ package at.rueckgr.irc.bot.uno;
 
 import at.rueckgr.irc.bot.uno.commands.Event;
 import at.rueckgr.irc.bot.uno.model.UnoState;
-import org.jibble.pircbot.PircBot;
 import org.json.simple.JSONObject;
+import org.pircbotx.Channel;
+import org.pircbotx.Configuration;
+import org.pircbotx.PircBotX;
+import org.pircbotx.hooks.Listener;
+import org.pircbotx.hooks.events.JoinEvent;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
+import org.pircbotx.output.OutputChannel;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Bot extends PircBot {
+public class Bot implements Listener<PircBotX> {
 
     // TODO use name reported by PircBot
     public static final String NAME = "unobot";
@@ -27,6 +34,8 @@ public class Bot extends PircBot {
     private final MessageCollector messageCollector;
     private final LastActivityTracker lastActivityTracker;
     private ActivityScheduler activityScheduler;
+    private PircBotX pircBotX;
+    private Channel channel;
 
     public Bot() {
         messageCollector = new MessageCollector();
@@ -34,9 +43,8 @@ public class Bot extends PircBot {
         commands = new HashMap<>();
         Reflections reflections = new Reflections(Event.class.getPackage().getName());
         for (Class<? extends Event> commandClass : reflections.getSubTypesOf(Event.class)) {
-            Event eventObject = null;
             try {
-                eventObject = commandClass.newInstance();
+                Event eventObject = commandClass.newInstance();
                 commands.put(eventObject.getCommand(), eventObject);
             }
             catch (ReflectiveOperationException e) {
@@ -47,13 +55,11 @@ public class Bot extends PircBot {
         unoState = new UnoState();
 
         lastActivityTracker = new LastActivityTracker();
-
-        setMessageDelay(1L);
     }
 
-    @Override
-    protected void onMessage(String channel, String sender, String login, String hostname, String message) {
-        if(CHANNEL.equals(channel)) {
+    protected void onMessage(Channel channel, String message) {
+        // TODO command pattern
+        if(CHANNEL.equals(channel.getName())) {
             lastActivityTracker.recordActivity();
 
             if(message != null) {
@@ -63,22 +69,21 @@ public class Bot extends PircBot {
                 startGame();
             }
             if(JOIN_COMMAND.equalsIgnoreCase(message)) {
-                sendMessage(CHANNEL, "!botjoin");
+                channel.send().message("!botjoin");
             }
             if((JOIN_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
-                sendMessage(CHANNEL, "!botjoin");
+                channel.send().message("!botjoin");
             }
             if(LEAVE_COMMAND.equalsIgnoreCase(message)) {
-                sendMessage(CHANNEL, "!leave");
+                channel.send().message("!leave");
             }
             if((LEAVE_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
-                sendMessage(CHANNEL, "!leave");
+                channel.send().message("!leave");
             }
         }
     }
 
-    @Override
-    protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+    protected void onPrivateMessage(String sender, String message) {
         if(BOT_NAME.equals(sender)) {
             messageCollector.collect(message);
             if(!messageCollector.hasCompleteMessage()) {
@@ -102,7 +107,7 @@ public class Bot extends PircBot {
             //noinspection SuspiciousMethodCalls
             String result = commands.get(event).handle(unoState, jsonObject);
             if(result != null) {
-                sendMessage(CHANNEL, result);
+                channel.send().message(result);
             }
         }
     }
@@ -110,38 +115,72 @@ public class Bot extends PircBot {
     public void startGame() {
         lastActivityTracker.recordActivity();
 
-        sendMessage(CHANNEL, "!uno +a +e");
-        sendMessage(CHANNEL, "?join");
+        OutputChannel outputChannel = channel.send();
+
+        outputChannel.message("!uno +a +e");
+        outputChannel.message("?join");
         try {
             Thread.sleep(5000);
         }
         catch (InterruptedException e) {
             /* ignore */
         }
-        sendMessage(CHANNEL, "!deal");
-        sendMessage(CHANNEL, "!leave");
+        outputChannel.message("!deal");
+        outputChannel.message("!leave");
         try {
             Thread.sleep(100);
         }
         catch (InterruptedException e) {
             /* ignore */
         }
-        sendMessage(CHANNEL, "!botjoin");
+        outputChannel.message("!botjoin");
     }
 
     public void run() throws Exception {
-        setName(NAME);
-        setVerbose(true);
-        connect(NETWORK);
-        joinChannel(CHANNEL);
+        Configuration<PircBotX> configuration = new Configuration.Builder<>()
+                .setName(NAME)
+                .setServerHostname(NETWORK)
+                .addAutoJoinChannel(CHANNEL)
+                .addListener(this)
+                .setMessageDelay(1L)
+                .buildConfiguration();
 
         activityScheduler = new ActivityScheduler(this, lastActivityTracker);
         activityScheduler.start();
+
+        pircBotX = new PircBotX(configuration);
+        pircBotX.startBot();
+    }
+
+    public void shutdown() {
+        if(activityScheduler != null) {
+            activityScheduler.interrupt();
+        }
+
+        if(pircBotX != null) {
+            pircBotX.sendIRC().quitServer("So long and thanks for all the fish!");
+        }
     }
 
     @Override
-    public synchronized void dispose() {
-        activityScheduler.interrupt();
-        super.dispose();
+    public void onEvent(org.pircbotx.hooks.Event<PircBotX> event) throws Exception {
+        // TODO command pattern
+        if(event instanceof JoinEvent) {
+            JoinEvent<PircBotX> joinEvent = (JoinEvent<PircBotX>) event;
+            Channel channel = joinEvent.getChannel();
+            if(CHANNEL.equals(channel.getName())) {
+                this.channel = channel;
+            }
+        }
+
+        if(event instanceof MessageEvent) {
+            MessageEvent<PircBotX> messageEvent = (MessageEvent<PircBotX>) event;
+            onMessage(messageEvent.getChannel(), messageEvent.getMessage());
+        }
+
+        if(event instanceof PrivateMessageEvent) {
+            PrivateMessageEvent<PircBotX> privateMessageEvent = (PrivateMessageEvent<PircBotX>) event;
+            onPrivateMessage(privateMessageEvent.getUser().getNick(), privateMessageEvent.getMessage());
+        }
     }
 }
