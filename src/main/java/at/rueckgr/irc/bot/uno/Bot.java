@@ -83,7 +83,7 @@ public class Bot implements Listener<PircBotX> {
         }
     }
 
-    protected void onPrivateMessage(String sender, String message) {
+    protected synchronized void onPrivateMessage(String sender, String message) {
         if(BOT_NAME.equals(sender)) {
             messageCollector.collect(message);
             if(!messageCollector.hasCompleteMessage()) {
