@@ -10,13 +10,18 @@ import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
+import org.pircbotx.hooks.managers.GenericListenerManager;
 import org.pircbotx.output.OutputChannel;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Bot implements Listener<PircBotX> {
+
+    private static final Logger logger = LoggerFactory.getLogger(Bot.class);
 
     // TODO use name reported by PircBot
     public static final String NAME = "unobot";
@@ -58,6 +63,8 @@ public class Bot implements Listener<PircBotX> {
     }
 
     protected void onMessage(Channel channel, String message) {
+        logger.debug("Incoming message from channel {} : {}", channel.getName(), message);
+
         // TODO command pattern
         if(CHANNEL.equals(channel.getName())) {
             lastActivityTracker.recordActivity();
@@ -66,20 +73,36 @@ public class Bot implements Listener<PircBotX> {
                 message = message.trim();
             }
             if(AUTOPLAY_COMMAND.equalsIgnoreCase(message)) {
+                logger.debug("Autoplay command detected");
+
                 startGame();
             }
-            if(JOIN_COMMAND.equalsIgnoreCase(message)) {
+            else if(JOIN_COMMAND.equalsIgnoreCase(message)) {
+                logger.debug("Join command for all bots detected");
+
                 channel.send().message("!botjoin");
             }
-            if((JOIN_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
+            else if((JOIN_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
+                logger.debug("Join command for this bot detected");
+
                 channel.send().message("!botjoin");
             }
-            if(LEAVE_COMMAND.equalsIgnoreCase(message)) {
+            else if(LEAVE_COMMAND.equalsIgnoreCase(message)) {
+                logger.debug("Leave command for all bots detected");
+
                 channel.send().message("!leave");
             }
-            if((LEAVE_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
+            else if((LEAVE_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
+                logger.debug("Leave command for this bot detected");
+
                 channel.send().message("!leave");
             }
+            else {
+                logger.debug("Discarding message (irrelevant)");
+            }
+        }
+        else {
+            logger.debug("Discarding message; wrong channel {}", channel.getName());
         }
     }
 
@@ -95,18 +118,24 @@ public class Bot implements Listener<PircBotX> {
             }
 
             if(!jsonObject.containsKey("event")) {
+                logger.debug("Discarding message; key not found");
+
                 return;
             }
 
             Object event = jsonObject.get("event");
             //noinspection SuspiciousMethodCalls
             if(!commands.containsKey(event)) {
+                logger.debug("Discarding message; unhandled command: {}", event);
+
                 return;
             }
 
             //noinspection SuspiciousMethodCalls
             String result = commands.get(event).handle(unoState, jsonObject);
             if(result != null) {
+                logger.debug("Sending answer to channel: " + result);
+
                 channel.send().message(result);
             }
         }
@@ -137,12 +166,15 @@ public class Bot implements Listener<PircBotX> {
     }
 
     public void run() throws Exception {
+        GenericListenerManager<PircBotX> listenerManager = new GenericListenerManager<>();
+        listenerManager.addListener(this);
         Configuration<PircBotX> configuration = new Configuration.Builder<>()
                 .setName(NAME)
                 .setServerHostname(NETWORK)
                 .addAutoJoinChannel(CHANNEL)
                 .addListener(this)
                 .setMessageDelay(1L)
+                .setListenerManager(listenerManager)
                 .buildConfiguration();
 
         activityScheduler = new ActivityScheduler(this, lastActivityTracker);
@@ -166,21 +198,28 @@ public class Bot implements Listener<PircBotX> {
     public void onEvent(org.pircbotx.hooks.Event<PircBotX> event) throws Exception {
         // TODO command pattern
         if(event instanceof JoinEvent) {
+            logger.debug("Join event detected");
+
             JoinEvent<PircBotX> joinEvent = (JoinEvent<PircBotX>) event;
             Channel channel = joinEvent.getChannel();
             if(CHANNEL.equals(channel.getName())) {
                 this.channel = channel;
             }
         }
+        else if(event instanceof MessageEvent) {
+            logger.debug("Message event detected");
 
-        if(event instanceof MessageEvent) {
             MessageEvent<PircBotX> messageEvent = (MessageEvent<PircBotX>) event;
             onMessage(messageEvent.getChannel(), messageEvent.getMessage());
         }
+        else if(event instanceof PrivateMessageEvent) {
+            logger.debug("Private message event detected");
 
-        if(event instanceof PrivateMessageEvent) {
             PrivateMessageEvent<PircBotX> privateMessageEvent = (PrivateMessageEvent<PircBotX>) event;
             onPrivateMessage(privateMessageEvent.getUser().getNick(), privateMessageEvent.getMessage());
+        }
+        else {
+            logger.debug("Unknown event of type: {}", event.getClass().getName());
         }
     }
 }
