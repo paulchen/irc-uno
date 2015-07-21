@@ -194,7 +194,7 @@
         <!--module name="DesignForExtension"/-->
         <module name="FinalClass"/>
         <!-- <module name="HideUtilityClassConstructor"/> -->
-        <module name="InterfaceIsType"/>
+        <!-- <module name="InterfaceIsType"/> -->
         <!-- MR: Modified visibility to allow package variables w/o getters/setters (for testing) -->
         <module name="VisibilityModifier">
             <property name="packageAllowed" value="true"/>

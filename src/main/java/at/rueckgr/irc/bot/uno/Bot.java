@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class Bot implements Listener<PircBotX>,BotInfoProvider {
+public class Bot implements Listener<PircBotX>, BotInfoProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
 
