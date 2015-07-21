@@ -17,7 +17,7 @@ public class HandEvent implements Event {
     private static final String COMMAND = "hand_info";
 
     @Override
-    public String handle(UnoState unoState, JSONObject object) {
+    public String handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
         LogHelper.dumpState(unoState);
 
         if(!object.containsKey("hand")) {

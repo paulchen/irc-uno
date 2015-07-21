@@ -1,6 +1,5 @@
 package at.rueckgr.irc.bot.uno.commands;
 
-import at.rueckgr.irc.bot.uno.Bot;
 import at.rueckgr.irc.bot.uno.LogHelper;
 import at.rueckgr.irc.bot.uno.UnoHelper;
 import at.rueckgr.irc.bot.uno.model.UnoState;
@@ -14,7 +13,7 @@ public class PlayerDrewEvent implements Event {
     private static final String COMMAND = "player_drew_card";
 
     @Override
-    public String handle(UnoState unoState, JSONObject object) {
+    public String handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
         LogHelper.dumpState(unoState);
 
         if(!object.containsKey("player")) {
@@ -31,7 +30,7 @@ public class PlayerDrewEvent implements Event {
         }
 
         String playerName = (String) playerObject;
-        if(!Bot.NAME.equalsIgnoreCase(playerName)) {
+        if(!botInfoProvider.getName().equalsIgnoreCase(playerName)) {
             logger.debug("Discarding message; other player's turn");
 
             return null;

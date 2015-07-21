@@ -14,7 +14,7 @@ public class CurrentCardEvent implements Event {
     private static final String COMMAND = "current_card";
 
     @Override
-    public String handle(UnoState unoState, JSONObject object) {
+    public String handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
         LogHelper.dumpState(unoState);
 
         if(!object.containsKey("current_card")) {

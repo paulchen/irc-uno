@@ -1,6 +1,5 @@
 package at.rueckgr.irc.bot.uno.commands;
 
-import at.rueckgr.irc.bot.uno.Bot;
 import at.rueckgr.irc.bot.uno.LogHelper;
 import at.rueckgr.irc.bot.uno.UnoHelper;
 import at.rueckgr.irc.bot.uno.model.UnoState;
@@ -16,7 +15,7 @@ public class CurrentOrderEvent implements Event {
     private static final String COMMAND = "current_player_order";
 
     @Override
-    public String handle(UnoState unoState, JSONObject object) {
+    public String handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
         LogHelper.dumpState(unoState);
 
         if(!object.containsKey("order")) {
@@ -45,7 +44,7 @@ public class CurrentOrderEvent implements Event {
             return null;
         }
         String currentPlayerName = (String) firstItem;
-        if(!Bot.NAME.equalsIgnoreCase(currentPlayerName)) {
+        if(!botInfoProvider.getName().equalsIgnoreCase(currentPlayerName)) {
             logger.debug("Discarding message; other player's turn: {}", currentPlayerName);
 
             return null;

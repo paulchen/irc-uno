@@ -1,7 +1,9 @@
 package at.rueckgr.irc.bot.uno;
 
+import at.rueckgr.irc.bot.uno.commands.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.commands.Event;
 import at.rueckgr.irc.bot.uno.model.UnoState;
+import at.rueckgr.irc.bot.uno.util.ConfigurationKeys;
 import org.json.simple.JSONObject;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
@@ -16,20 +18,16 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
-public class Bot implements Listener<PircBotX> {
+public class Bot implements Listener<PircBotX>,BotInfoProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
 
-    // TODO use name reported by PircBot
-    public static final String NAME = "unobot";
-
-    // TODO use properties
-    private static final String NETWORK = "irc.rueckgr.at";
-    private static final String CHANNEL = "#uno";
-    private static final String BOT_NAME = "GamingPrincessLuna";
     private static final String JOIN_COMMAND = "?join";
     private static final String LEAVE_COMMAND = "?leave";
     private static final String AUTOPLAY_COMMAND = "?autoplay";
@@ -42,7 +40,17 @@ public class Bot implements Listener<PircBotX> {
     private PircBotX pircBotX;
     private Channel channel;
 
+    private final Properties properties;
+
     public Bot() {
+        properties = new Properties();
+        try {
+            properties.load(new FileReader("bot.properties"));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         messageCollector = new MessageCollector();
 
         commands = new HashMap<>();
@@ -66,7 +74,7 @@ public class Bot implements Listener<PircBotX> {
         logger.debug("Incoming message from channel {} : {}", channel.getName(), message);
 
         // TODO command pattern
-        if(CHANNEL.equals(channel.getName())) {
+        if(properties.get(ConfigurationKeys.CHANNEL).equals(channel.getName())) {
             lastActivityTracker.recordActivity();
 
             if(message != null) {
@@ -82,7 +90,7 @@ public class Bot implements Listener<PircBotX> {
 
                 channel.send().message("!botjoin");
             }
-            else if((JOIN_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
+            else if((JOIN_COMMAND + " " + pircBotX.getNick()).equalsIgnoreCase(message)) {
                 logger.debug("Join command for this bot detected");
 
                 channel.send().message("!botjoin");
@@ -92,7 +100,7 @@ public class Bot implements Listener<PircBotX> {
 
                 channel.send().message("!leave");
             }
-            else if((LEAVE_COMMAND + " " + NAME).equalsIgnoreCase(message)) {
+            else if((LEAVE_COMMAND + " " + pircBotX.getNick()).equalsIgnoreCase(message)) {
                 logger.debug("Leave command for this bot detected");
 
                 channel.send().message("!leave");
@@ -107,7 +115,7 @@ public class Bot implements Listener<PircBotX> {
     }
 
     protected synchronized void onPrivateMessage(String sender, String message) {
-        if(BOT_NAME.equals(sender)) {
+        if(properties.getProperty(ConfigurationKeys.BOT_NAME).equals(sender)) {
             messageCollector.collect(message);
             if(!messageCollector.hasCompleteMessage()) {
                 return;
@@ -132,7 +140,7 @@ public class Bot implements Listener<PircBotX> {
             }
 
             //noinspection SuspiciousMethodCalls
-            String result = commands.get(event).handle(unoState, jsonObject);
+            String result = commands.get(event).handle(unoState, jsonObject, this);
             if(result != null) {
                 logger.debug("Sending answer to channel: " + result);
 
@@ -169,9 +177,9 @@ public class Bot implements Listener<PircBotX> {
         GenericListenerManager<PircBotX> listenerManager = new GenericListenerManager<>();
         listenerManager.addListener(this);
         Configuration<PircBotX> configuration = new Configuration.Builder<>()
-                .setName(NAME)
-                .setServerHostname(NETWORK)
-                .addAutoJoinChannel(CHANNEL)
+                .setName(properties.getProperty(ConfigurationKeys.NAME))
+                .setServerHostname(properties.getProperty(ConfigurationKeys.NETWORK))
+                .addAutoJoinChannel(properties.getProperty(ConfigurationKeys.CHANNEL))
                 .addListener(this)
                 .setMessageDelay(1L)
                 .setListenerManager(listenerManager)
@@ -202,7 +210,7 @@ public class Bot implements Listener<PircBotX> {
 
             JoinEvent<PircBotX> joinEvent = (JoinEvent<PircBotX>) event;
             Channel channel = joinEvent.getChannel();
-            if(CHANNEL.equals(channel.getName())) {
+            if(properties.getProperty(ConfigurationKeys.CHANNEL).equals(channel.getName())) {
                 this.channel = channel;
             }
         }
@@ -221,5 +229,10 @@ public class Bot implements Listener<PircBotX> {
         else {
             logger.debug("Unknown event of type: {}", event.getClass().getName());
         }
+    }
+
+    @Override
+    public String getName() {
+        return pircBotX.getNick();
     }
 }
