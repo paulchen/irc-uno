@@ -1,4 +1,4 @@
-package at.rueckgr.irc.bot.uno.commands;
+package at.rueckgr.irc.bot.uno.events;
 
 import at.rueckgr.irc.bot.uno.LogHelper;
 import at.rueckgr.irc.bot.uno.UnoHelper;
