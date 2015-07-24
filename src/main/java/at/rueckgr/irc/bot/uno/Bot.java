@@ -3,6 +3,7 @@ package at.rueckgr.irc.bot.uno;
 import at.rueckgr.irc.bot.uno.events.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.events.Event;
 import at.rueckgr.irc.bot.uno.model.UnoState;
+import at.rueckgr.irc.bot.uno.usercommands.UserCommand;
 import at.rueckgr.irc.bot.uno.util.ConfigurationKeys;
 import org.json.simple.JSONObject;
 import org.pircbotx.Channel;
@@ -20,19 +21,19 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class Bot implements Listener<PircBotX>, BotInfoProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
 
-    private static final String JOIN_COMMAND = "?join";
-    private static final String LEAVE_COMMAND = "?leave";
-    private static final String AUTOPLAY_COMMAND = "?autoplay";
-
-    private final Map<String, Event> commands;
+    private final Map<String, ? extends Event> events;
+    private final List<? extends UserCommand> userCommands;
     private final UnoState unoState;
     private final MessageCollector messageCollector;
     private final LastActivityTracker lastActivityTracker;
@@ -53,60 +54,64 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
 
         messageCollector = new MessageCollector();
 
-        commands = new HashMap<>();
-        Reflections reflections = new Reflections(Event.class.getPackage().getName());
-        for (Class<? extends Event> commandClass : reflections.getSubTypesOf(Event.class)) {
-            try {
-                Event eventObject = commandClass.newInstance();
-                commands.put(eventObject.getCommand(), eventObject);
-            }
-            catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        events = initEvents();
+        userCommands = initUserCommands();
 
         unoState = new UnoState();
 
         lastActivityTracker = new LastActivityTracker();
     }
 
-    protected void onMessage(Channel channel, String message) {
+    // TODO move some method to Util class
+    private Map<String, ? extends Event> initEvents() {
+        Map<String, Event> events = new HashMap<>();
+
+        for (Event eventObject : getClasses(Event.class)) {
+            events.put(eventObject.getCommand(), eventObject);
+        }
+
+        return events;
+    }
+
+    private List<? extends UserCommand> initUserCommands() {
+        return getClasses(UserCommand.class);
+    }
+
+    private <T> T newInstance(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        }
+        catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> List<T> getClasses(Class<T> clazz) {
+        return new Reflections(clazz.getPackage().getName()).getSubTypesOf(clazz).stream().map(this::newInstance).collect(Collectors.toList());
+    }
+
+    protected void onMessage(Channel channel, String nickname, String message) {
         logger.debug("Incoming message from channel {} : {}", channel.getName(), message);
 
-        // TODO command pattern
         if(properties.get(ConfigurationKeys.CHANNEL).equals(channel.getName())) {
             lastActivityTracker.recordActivity();
 
             if(message != null) {
                 message = message.trim();
             }
-            if(AUTOPLAY_COMMAND.equalsIgnoreCase(message)) {
-                logger.debug("Autoplay command detected");
 
-                startGame();
+            List<String> output = new ArrayList<>();
+            for (UserCommand userCommand : userCommands) {
+                if(userCommand.isResponsible(nickname, message, this)) {
+                    output.addAll(userCommand.handleMessage(nickname, message, this));
+                }
             }
-            else if(JOIN_COMMAND.equalsIgnoreCase(message)) {
-                logger.debug("Join command for all bots detected");
 
-                channel.send().message("!botjoin");
-            }
-            else if((JOIN_COMMAND + " " + pircBotX.getNick()).equalsIgnoreCase(message)) {
-                logger.debug("Join command for this bot detected");
-
-                channel.send().message("!botjoin");
-            }
-            else if(LEAVE_COMMAND.equalsIgnoreCase(message)) {
-                logger.debug("Leave command for all bots detected");
-
-                channel.send().message("!leave");
-            }
-            else if((LEAVE_COMMAND + " " + pircBotX.getNick()).equalsIgnoreCase(message)) {
-                logger.debug("Leave command for this bot detected");
-
-                channel.send().message("!leave");
+            if(output.isEmpty()) {
+                logger.debug("Discarding message (irrelevant)");
             }
             else {
-                logger.debug("Discarding message (irrelevant)");
+                sendOutput(output);
             }
         }
         else {
@@ -133,14 +138,14 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
 
             Object event = jsonObject.get("event");
             //noinspection SuspiciousMethodCalls
-            if(!commands.containsKey(event)) {
+            if(!events.containsKey(event)) {
                 logger.debug("Discarding message; unhandled command: {}", event);
 
                 return;
             }
 
             //noinspection SuspiciousMethodCalls
-            String result = commands.get(event).handle(unoState, jsonObject, this);
+            String result = events.get(event).handle(unoState, jsonObject, this);
             if(result != null) {
                 logger.debug("Sending answer to channel: " + result);
 
@@ -149,28 +154,25 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
         }
     }
 
-    public void startGame() {
+    public void sendOutput(List<String> messages) {
         lastActivityTracker.recordActivity();
 
         OutputChannel outputChannel = channel.send();
 
-        outputChannel.message("!uno +a +e");
-        outputChannel.message("?join");
-        try {
-            Thread.sleep(5000);
+        boolean firstMessage = true;
+        for (String message : messages) {
+            if(!firstMessage) {
+                try {
+                    Thread.sleep(100); // TODO magic number
+                }
+                catch (InterruptedException e) {
+                /* ignore */
+                }
+            }
+            firstMessage = false;
+
+            outputChannel.message(message);
         }
-        catch (InterruptedException e) {
-            /* ignore */
-        }
-        outputChannel.message("!deal");
-        outputChannel.message("!leave");
-        try {
-            Thread.sleep(100);
-        }
-        catch (InterruptedException e) {
-            /* ignore */
-        }
-        outputChannel.message("!botjoin");
     }
 
     public void run() throws Exception {
@@ -218,7 +220,7 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
             logger.debug("Message event detected");
 
             MessageEvent<PircBotX> messageEvent = (MessageEvent<PircBotX>) event;
-            onMessage(messageEvent.getChannel(), messageEvent.getMessage());
+            onMessage(messageEvent.getChannel(), messageEvent.getUser().getNick(), messageEvent.getMessage());
         }
         else if(event instanceof PrivateMessageEvent) {
             logger.debug("Private message event detected");
@@ -234,5 +236,9 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
     @Override
     public String getName() {
         return pircBotX.getNick();
+    }
+
+    public void startGame() {
+        sendOutput(Util.createAutoplayCommands());
     }
 }
