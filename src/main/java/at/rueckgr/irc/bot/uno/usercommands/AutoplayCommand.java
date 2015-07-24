@@ -14,13 +14,18 @@ public class AutoplayCommand implements UserCommand {
 
     @Override
     public boolean isResponsible(String nickname, String message, BotInfoProvider botInfoProvider) {
-        return message.trim().equals(AUTOPLAY_COMMAND);
+        return message.trim().startsWith(AUTOPLAY_COMMAND);
     }
 
     @Override
     public List<String> handleMessage(String nickname, String message, BotInfoProvider botInfoProvider) {
         logger.debug("Command ?autoplay detected");
 
-        return Util.createAutoplayCommands();
+        message = message.trim();
+        if(message.length() > AUTOPLAY_COMMAND.length()) {
+            return Util.createAutoplayCommands(message.substring(AUTOPLAY_COMMAND.length() + 1));
+        }
+
+        return Util.createAutoplayCommands("");
     }
 }

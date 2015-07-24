@@ -239,6 +239,6 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
     }
 
     public void startGame() {
-        sendOutput(Util.createAutoplayCommands());
+        sendOutput(Util.createAutoplayCommands("+a +e"));
     }
 }
