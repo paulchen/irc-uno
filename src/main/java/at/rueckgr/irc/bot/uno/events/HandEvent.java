@@ -2,6 +2,7 @@ package at.rueckgr.irc.bot.uno.events;
 
 import at.rueckgr.irc.bot.uno.LogHelper;
 import at.rueckgr.irc.bot.uno.UnoHelper;
+import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.model.Card;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
@@ -12,13 +13,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused") // accessed via reflection
 public class HandEvent implements Event {
     private static final Logger logger = LoggerFactory.getLogger(HandEvent.class);
 
     private static final String COMMAND = "hand_info";
 
     @Override
-    public String handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
+    public Action handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
         LogHelper.dumpState(unoState);
 
         if(!object.containsKey("hand")) {

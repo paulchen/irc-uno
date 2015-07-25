@@ -10,6 +10,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused") // accessed via reflection
 public class LeaveCommand implements UserCommand {
     private static final Logger logger = LoggerFactory.getLogger(LeaveCommand.class);
 

@@ -146,11 +146,9 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
             }
 
             //noinspection SuspiciousMethodCalls
-            String result = events.get(event).handle(unoState, jsonObject, this);
-            if(result != null) {
-                logger.debug("Sending answer to channel: " + result);
-
-                channel.send().message(result);
+            Action action = events.get(event).handle(unoState, jsonObject, this);
+            if(action != null) {
+                action.execute(channel.send());
             }
         }
     }

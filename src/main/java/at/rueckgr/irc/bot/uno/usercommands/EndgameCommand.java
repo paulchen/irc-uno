@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused") // accessed via reflection
 public class EndgameCommand implements UserCommand {
     private static final Logger logger = LoggerFactory.getLogger(EndgameCommand.class);
 

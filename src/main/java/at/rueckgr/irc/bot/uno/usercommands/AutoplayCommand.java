@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+@SuppressWarnings("unused") // accessed via reflection
 public class AutoplayCommand implements UserCommand {
     private static final Logger logger = LoggerFactory.getLogger(AutoplayCommand.class);
 
