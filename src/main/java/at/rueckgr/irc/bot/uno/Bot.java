@@ -1,5 +1,6 @@
 package at.rueckgr.irc.bot.uno;
 
+import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.events.Event;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import at.rueckgr.irc.bot.uno.usercommands.UserCommand;
@@ -100,7 +101,7 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
                 message = message.trim();
             }
 
-            List<String> output = new ArrayList<>();
+            List<Action> output = new ArrayList<>();
             for (UserCommand userCommand : userCommands) {
                 if(userCommand.isResponsible(nickname, message, this)) {
                     output.addAll(userCommand.handleMessage(nickname, message, this));
@@ -111,7 +112,7 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
                 logger.debug("Discarding message (irrelevant)");
             }
             else {
-                sendOutput(output);
+                executeActions(output);
             }
         }
         else {
@@ -154,24 +155,12 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
         }
     }
 
-    public void sendOutput(List<String> messages) {
+    public void executeActions(List<Action> actions) {
         lastActivityTracker.recordActivity();
 
         OutputChannel outputChannel = channel.send();
-
-        boolean firstMessage = true;
-        for (String message : messages) {
-            if(!firstMessage) {
-                try {
-                    Thread.sleep(100); // TODO magic number
-                }
-                catch (InterruptedException e) {
-                /* ignore */
-                }
-            }
-            firstMessage = false;
-
-            outputChannel.message(message);
+        for (Action action : actions) {
+            action.execute(outputChannel);
         }
     }
 
@@ -239,6 +228,6 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
     }
 
     public void startGame() {
-        sendOutput(Util.createAutoplayCommands("+a +e"));
+        executeActions(Util.createAutoplayCommands("+a +e"));
     }
 }

@@ -1,10 +1,12 @@
 package at.rueckgr.irc.bot.uno.usercommands;
 
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
+import at.rueckgr.irc.bot.uno.actions.Action;
+import at.rueckgr.irc.bot.uno.actions.ChannelMessageAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EndgameCommand implements UserCommand {
@@ -19,11 +21,9 @@ public class EndgameCommand implements UserCommand {
     }
 
     @Override
-    public List<String> handleMessage(String nickname, String message, BotInfoProvider botInfoProvider) {
+    public List<Action> handleMessage(String nickname, String message, BotInfoProvider botInfoProvider) {
         logger.debug("Command ?endgame detected");
 
-        List<String> result = new ArrayList<>();
-        result.add(OUTGOING_ENDGAME_COMMAND);
-        return result;
+        return Collections.singletonList(new ChannelMessageAction(OUTGOING_ENDGAME_COMMAND));
     }
 }

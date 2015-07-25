@@ -1,5 +1,6 @@
 package at.rueckgr.irc.bot.uno.usercommands;
 
+import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.util.Util;
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ public class AutoplayCommand implements UserCommand {
     }
 
     @Override
-    public List<String> handleMessage(String nickname, String message, BotInfoProvider botInfoProvider) {
+    public List<Action> handleMessage(String nickname, String message, BotInfoProvider botInfoProvider) {
         logger.debug("Command ?autoplay detected");
 
         message = message.trim();
