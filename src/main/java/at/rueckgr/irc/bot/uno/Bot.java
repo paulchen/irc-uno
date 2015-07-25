@@ -1,6 +1,5 @@
 package at.rueckgr.irc.bot.uno;
 
-import at.rueckgr.irc.bot.uno.events.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.events.Event;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import at.rueckgr.irc.bot.uno.usercommands.UserCommand;

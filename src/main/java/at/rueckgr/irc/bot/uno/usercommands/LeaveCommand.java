@@ -1,6 +1,6 @@
 package at.rueckgr.irc.bot.uno.usercommands;
 
-import at.rueckgr.irc.bot.uno.events.BotInfoProvider;
+import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

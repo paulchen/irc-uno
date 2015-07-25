@@ -1,4 +1,4 @@
-package at.rueckgr.irc.bot.uno.events;
+package at.rueckgr.irc.bot.uno;
 
 public interface BotInfoProvider {
     String getName();
