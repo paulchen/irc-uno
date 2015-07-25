@@ -1,4 +1,4 @@
-package at.rueckgr.irc.bot.uno;
+package at.rueckgr.irc.bot.uno.util;
 
 import java.util.ArrayList;
 import java.util.List;
