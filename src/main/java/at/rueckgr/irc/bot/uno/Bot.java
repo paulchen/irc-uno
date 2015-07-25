@@ -91,7 +91,7 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
         return new Reflections(clazz.getPackage().getName()).getSubTypesOf(clazz).stream().map(this::newInstance).collect(Collectors.toList());
     }
 
-    protected void onMessage(Channel channel, String nickname, String message) {
+    private void onMessage(Channel channel, String nickname, String message) {
         logger.debug("Incoming message from channel {} : {}", channel.getName(), message);
 
         if(properties.get(ConfigurationKeys.CHANNEL).equals(channel.getName())) {
@@ -120,7 +120,7 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
         }
     }
 
-    protected synchronized void onPrivateMessage(String sender, String message) {
+    private synchronized void onPrivateMessage(String sender, String message) {
         if(properties.getProperty(ConfigurationKeys.BOT_NAME).equals(sender)) {
             messageCollector.collect(message);
             if(!messageCollector.hasCompleteMessage()) {
@@ -153,7 +153,7 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
         }
     }
 
-    public void executeActions(List<Action> actions) {
+    private void executeActions(List<Action> actions) {
         lastActivityTracker.recordActivity();
 
         OutputChannel outputChannel = channel.send();

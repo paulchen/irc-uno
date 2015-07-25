@@ -19,10 +19,6 @@ public class LeaveCommand implements UserCommand {
 
     @Override
     public boolean isResponsible(String nickname, String message, BotInfoProvider botInfoProvider) {
-        if(nickname == null || message == null) {
-            return false;
-        }
-
         return message.trim().startsWith(INCOMING_LEAVE_COMMAND);
     }
 
