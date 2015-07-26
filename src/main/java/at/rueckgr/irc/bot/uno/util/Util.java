@@ -12,17 +12,19 @@ public class Util {
         List<Action> result = new ArrayList<>();
 
         result.add(new ChannelMessageAction("!uno " + unoOptions));
+
         result.add(new ChannelMessageAction("?join"));
+        result.add(new WaitAction(1000));
 
-        result.add(new WaitAction(2000));
-
-        // TODO reverse these commands once the bug in GamingProcessLuna has been fixed
-        result.add(new ChannelMessageAction("!deal"));
         result.add(new ChannelMessageAction("!leave"));
-
-        result.add(new WaitAction(200));
+        result.add(new WaitAction(1000));
 
         result.add(new ChannelMessageAction("!botjoin"));
+        result.add(new WaitAction(1000));
+
+        result.add(new ChannelMessageAction("!deal"));
+
+
 
         return result;
     }
