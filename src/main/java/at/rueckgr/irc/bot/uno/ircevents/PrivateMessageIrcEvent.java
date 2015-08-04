@@ -4,19 +4,17 @@ import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.MessageCollector;
 import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.util.ConfigurationKeys;
+import at.rueckgr.irc.bot.uno.util.ReflectionsUtil;
 import org.json.simple.JSONObject;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused") // accessed via reflection
 public class PrivateMessageIrcEvent implements IrcEvent {
@@ -28,31 +26,7 @@ public class PrivateMessageIrcEvent implements IrcEvent {
     public PrivateMessageIrcEvent() {
         messageCollector = new MessageCollector();
 
-        events = initEvents();
-    }
-
-    private Map<String, ? extends at.rueckgr.irc.bot.uno.events.Event> initEvents() {
-        Map<String, at.rueckgr.irc.bot.uno.events.Event> events = new HashMap<>();
-
-        for (at.rueckgr.irc.bot.uno.events.Event eventObject : getClasses(at.rueckgr.irc.bot.uno.events.Event.class)) {
-            events.put(eventObject.getCommand(), eventObject);
-        }
-
-        return events;
-    }
-
-
-    private <T> List<T> getClasses(Class<T> clazz) {
-        return new Reflections(clazz.getPackage().getName()).getSubTypesOf(clazz).stream().map(this::newInstance).collect(Collectors.toList());
-    }
-
-    private <T> T newInstance(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-        }
-        catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        events = ReflectionsUtil.getEvents();
     }
 
     @Override
