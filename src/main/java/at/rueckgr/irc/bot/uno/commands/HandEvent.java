@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class HandEvent implements Event {
     private static final Logger logger = LoggerFactory.getLogger(HandEvent.class);
 

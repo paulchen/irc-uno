@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("unused")
 public class PlayerDrewEvent implements Event {
     private static final Logger logger = LoggerFactory.getLogger(PlayerDrewEvent.class);
 

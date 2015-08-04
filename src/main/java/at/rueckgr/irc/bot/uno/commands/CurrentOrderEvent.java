@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class CurrentOrderEvent implements Event {
     private static final Logger logger = LoggerFactory.getLogger(CurrentOrderEvent.class);
 

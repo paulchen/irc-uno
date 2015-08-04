@@ -28,5 +28,16 @@ public class LogHelper {
         else {
             logger.debug("Current hand: null");
         }
+
+        if(unoState.getPlayers() != null) {
+            logger.debug("Current players:");
+            for (String playerName : unoState.getPlayers().keySet()) {
+                logger.debug("Player {}: " + unoState.getPlayers().get(playerName));
+            }
+            logger.debug("End of current player list");
+        }
+        else {
+            logger.debug("Current players: null");
+        }
     }
 }
