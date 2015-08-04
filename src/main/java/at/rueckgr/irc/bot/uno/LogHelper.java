@@ -30,7 +30,7 @@ public class LogHelper {
         }
 
         if(unoState.getPlayers() != null) {
-            logger.debug("Current players:");
+            logger.debug("Current players ({}):", unoState.getPlayers().size());
             for (String playerName : unoState.getPlayers().keySet()) {
                 logger.debug("Player {}: " + unoState.getPlayers().get(playerName));
             }
