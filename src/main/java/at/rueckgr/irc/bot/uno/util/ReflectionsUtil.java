@@ -1,6 +1,8 @@
 package at.rueckgr.irc.bot.uno.util;
 
 import at.rueckgr.irc.bot.uno.events.Event;
+import at.rueckgr.irc.bot.uno.ircevents.IrcEvent;
+import at.rueckgr.irc.bot.uno.usercommands.UserCommand;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -11,6 +13,14 @@ import java.util.stream.Collectors;
 public final class ReflectionsUtil {
     private ReflectionsUtil() {
         // don't instantiate this class
+    }
+
+    public static List<? extends IrcEvent> getIrcEvents() {
+        return getClasses(IrcEvent.class);
+    }
+
+    public static List<? extends UserCommand> getUserCommands() {
+        return getClasses(UserCommand.class);
     }
 
     public static Map<String, ? extends Event> getEvents() {

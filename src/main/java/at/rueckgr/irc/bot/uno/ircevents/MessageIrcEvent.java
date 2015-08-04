@@ -4,17 +4,16 @@ import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.usercommands.UserCommand;
 import at.rueckgr.irc.bot.uno.util.ConfigurationKeys;
+import at.rueckgr.irc.bot.uno.util.ReflectionsUtil;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.MessageEvent;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused") // accessed via reflection
 public class MessageIrcEvent implements IrcEvent {
@@ -23,24 +22,7 @@ public class MessageIrcEvent implements IrcEvent {
     private final List<? extends UserCommand> userCommands;
 
     public MessageIrcEvent() {
-        userCommands = initUserCommands();
-    }
-
-    private List<? extends UserCommand> initUserCommands() {
-        return getClasses(UserCommand.class);
-    }
-
-    private <T> List<T> getClasses(Class<T> clazz) {
-        return new Reflections(clazz.getPackage().getName()).getSubTypesOf(clazz).stream().map(this::newInstance).collect(Collectors.toList());
-    }
-
-    private <T> T newInstance(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-        }
-        catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        userCommands = ReflectionsUtil.getUserCommands();
     }
 
     @Override
