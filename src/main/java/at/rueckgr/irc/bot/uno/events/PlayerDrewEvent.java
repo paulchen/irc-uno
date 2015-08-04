@@ -1,20 +1,23 @@
-package at.rueckgr.irc.bot.uno.commands;
+package at.rueckgr.irc.bot.uno.events;
 
 import at.rueckgr.irc.bot.uno.LogHelper;
 import at.rueckgr.irc.bot.uno.UnoHelper;
+import at.rueckgr.irc.bot.uno.actions.Action;
+import at.rueckgr.irc.bot.uno.actions.ChannelMessageAction;
 import at.rueckgr.irc.bot.uno.model.UnoState;
+import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("unused") // accessed via reflection
 public class PlayerDrewEvent implements Event {
     private static final Logger logger = LoggerFactory.getLogger(PlayerDrewEvent.class);
 
     private static final String COMMAND = "player_drew_card";
 
     @Override
-    public String handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
+    public Action handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
         LogHelper.dumpState(unoState);
 
         if(!object.containsKey("player")) {
@@ -41,11 +44,11 @@ public class PlayerDrewEvent implements Event {
         if(playerCommand == null) {
             logger.debug("Passing to next player");
 
-            return "!pass";
+            return new ChannelMessageAction("!pass");
         }
 
         logger.debug("Play command: {}", playerCommand);
-        return playerCommand;
+        return new ChannelMessageAction(playerCommand);
     }
 
     @Override

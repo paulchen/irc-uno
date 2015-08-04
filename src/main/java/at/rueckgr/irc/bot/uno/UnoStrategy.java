@@ -99,7 +99,7 @@ public class UnoStrategy {
     private static List<Color> getMostFrequentColor(List<Card> hand) {
         Map<Color, Long> map = hand.stream().filter(not(Card::isWildcard)).collect(Collectors.groupingBy(Card::getColor, Collectors.counting()));
         if (map.isEmpty()) {
-            return new ArrayList<Color>();
+            return new ArrayList<>();
         }
         return getElementsWithLargestKeys(map);
     }

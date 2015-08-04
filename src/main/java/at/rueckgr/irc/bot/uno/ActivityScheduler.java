@@ -1,7 +1,7 @@
 package at.rueckgr.irc.bot.uno;
 
 public class ActivityScheduler extends Thread {
-    public static final int SLEEP_TIME_MILLIS = 60000;
+    private static final int SLEEP_TIME_MILLIS = 60000;
 
     private final Bot bot;
     private final LastActivityTracker lastActivityTracker;

@@ -6,13 +6,10 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by paulchen on 12.07.15.
- */
 public class MessageCollector {
     private static final Logger logger = LoggerFactory.getLogger(BotThread.class);
 
-    private JSONParser jsonParser;
+    private final JSONParser jsonParser;
 
     private int messagesCount;
     private int messagesReceived;

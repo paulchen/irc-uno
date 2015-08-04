@@ -15,7 +15,7 @@
         <pircbotx.version>2.0.1</pircbotx.version>
         <json-simple.version>1.1.1</json-simple.version>
         <lombok.version>1.16.4</lombok.version>
-        <reflections.version>0.9.9-RC1</reflections.version>
+        <reflections.version>0.9.10</reflections.version>
         <commons-lang.version>3.4</commons-lang.version>
         <slf4j-api.version>1.5.5</slf4j-api.version>
         <slf4j-log4j.version>1.5.5</slf4j-log4j.version>
