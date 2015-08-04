@@ -1,6 +1,8 @@
-package at.rueckgr.irc.bot.uno.commands;
+package at.rueckgr.irc.bot.uno.events;
 
+import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.LogHelper;
+import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import at.rueckgr.irc.bot.uno.util.UnoStateHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +21,7 @@ public class CardCountsEvent implements Event {
     private static final String COMMAND = "card_counts";
 
     @Override
-    public String handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
+    public Action handle(UnoState unoState, JSONObject object, BotInfoProvider botInfoProvider) {
         LogHelper.dumpState(unoState);
 
         if(!object.containsKey("counts")) {
