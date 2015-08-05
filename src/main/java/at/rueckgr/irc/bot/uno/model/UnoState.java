@@ -13,4 +13,6 @@ public class UnoState {
     private List<Card> hand;
 
     private Map<String, PlayerInfo> players = new HashMap<>();
+
+    private List<String> playerOrder;
 }

@@ -39,5 +39,12 @@ public class LogHelper {
         else {
             logger.debug("Current players: null");
         }
+
+        if(unoState.getPlayerOrder() != null) {
+            logger.debug("Current player order: {}", unoState.getPlayerOrder().toString());
+        }
+        else {
+            logger.debug("Currnet player order: null");
+        }
     }
 }

@@ -41,20 +41,27 @@ public class CurrentOrderEvent implements Event {
 
             return null;
         }
-        Object firstItem = currentOrder.get(0);
-        if(!(firstItem instanceof String)) {
-            logger.debug("Discarding message; no String found; found instead: {}", firstItem.getClass().getName());
 
-            return null;
+        for (Object currentOrderObject : currentOrder) {
+            if(!(currentOrderObject instanceof String)) {
+                logger.debug("Discarding message; no String found; found instead: {}", currentOrderObject.getClass().getName());
+
+                return null;
+            }
         }
-        String currentPlayerName = (String) firstItem;
+
+        //noinspection unchecked
+        List<String> playerOrder = (List<String>) currentOrder;
+        unoState.setPlayerOrder(playerOrder);
+
+        String currentPlayerName = (String) currentOrder.get(0);
         if(!botInfoProvider.getName().equalsIgnoreCase(currentPlayerName)) {
             logger.debug("Discarding message; other player's turn: {}", currentPlayerName);
 
             return null;
         }
 
-        String playCommand = UnoHelper.createPlayCommand(unoState);
+        String playCommand = UnoHelper.createPlayCommand(unoState, true);
         if(playCommand == null) {
             logger.debug("Drawing a card");
 

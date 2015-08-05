@@ -40,7 +40,7 @@ public class PlayerDrewEvent implements Event {
             return null;
         }
 
-        String playerCommand = UnoHelper.createPlayCommand(unoState);
+        String playerCommand = UnoHelper.createPlayCommand(unoState, false);
         if(playerCommand == null) {
             logger.debug("Passing to next player");
 
