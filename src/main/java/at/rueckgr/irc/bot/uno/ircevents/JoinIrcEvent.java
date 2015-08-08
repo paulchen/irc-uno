@@ -2,9 +2,7 @@ package at.rueckgr.irc.bot.uno.ircevents;
 
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.actions.Action;
-import at.rueckgr.irc.bot.uno.actions.NickServAction;
 import at.rueckgr.irc.bot.uno.util.ConfigurationKeys;
-import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
@@ -12,7 +10,6 @@ import org.pircbotx.hooks.events.JoinEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,11 +32,6 @@ public class JoinIrcEvent implements IrcEvent {
             botInfoProvider.setChannel(channel);
         }
 
-        String password = botInfoProvider.getProperty(ConfigurationKeys.NICKSERV_PASSWORD);
-        if(StringUtils.isBlank(password)) {
-            return Collections.emptyList();
-        }
-
-        return Collections.singletonList(new NickServAction(MessageFormat.format("IDENTIFY {0}", password)));
+        return Collections.emptyList();
     }
 }
