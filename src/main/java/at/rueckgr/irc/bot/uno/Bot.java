@@ -16,6 +16,7 @@ import org.pircbotx.output.OutputUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,14 +64,20 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
     public void run() throws Exception {
         GenericListenerManager<PircBotX> listenerManager = new GenericListenerManager<>();
         listenerManager.addListener(this);
-        Configuration<PircBotX> configuration = new Configuration.Builder<>()
+        Configuration.Builder<PircBotX> pircBotXBuilder = new Configuration.Builder<>()
                 .setName(properties.getProperty(ConfigurationKeys.NAME))
                 .setServerHostname(properties.getProperty(ConfigurationKeys.NETWORK))
+                .setServerPort(Integer.parseInt(properties.getProperty(ConfigurationKeys.PORT)))
                 .addAutoJoinChannel(properties.getProperty(ConfigurationKeys.CHANNEL))
                 .addListener(this)
-                .setMessageDelay(1L)
+                .setMessageDelay(0L)
                 .setListenerManager(listenerManager)
-                .setAutoNickChange(true)
+                .setAutoNickChange(true);
+
+        if(properties.getProperty(ConfigurationKeys.USE_SSL).equalsIgnoreCase("1")) {
+            pircBotXBuilder.setSocketFactory(SSLSocketFactory.getDefault());
+        }
+        Configuration<PircBotX> configuration = pircBotXBuilder
                 .buildConfiguration();
 
         activityScheduler = new ActivityScheduler(this, lastActivityTracker);

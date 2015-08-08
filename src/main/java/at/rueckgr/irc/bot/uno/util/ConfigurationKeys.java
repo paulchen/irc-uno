@@ -6,4 +6,6 @@ public interface ConfigurationKeys {
     String CHANNEL = "channel";
     String BOT_NAME = "bot_name";
     String NICKSERV_PASSWORD = "nickserv_password";
+    String PORT = "port";
+    String USE_SSL = "ssl";
 }
