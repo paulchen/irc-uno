@@ -12,6 +12,7 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.managers.GenericListenerManager;
 import org.pircbotx.output.OutputChannel;
+import org.pircbotx.output.OutputUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +54,9 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
     private void executeActions(List<Action> actions) {
         lastActivityTracker.recordActivity();
 
-        OutputChannel outputChannel = channel.send();
+        OutputChannel outputChannel = (channel == null) ? null : channel.send();
         for (Action action : actions) {
-            action.execute(outputChannel);
+            action.execute(outputChannel, this);
         }
     }
 
@@ -69,6 +70,7 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
                 .addListener(this)
                 .setMessageDelay(1L)
                 .setListenerManager(listenerManager)
+                .setAutoNickChange(true)
                 .buildConfiguration();
 
         activityScheduler = new ActivityScheduler(this, lastActivityTracker);
@@ -133,6 +135,16 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
     @Override
     public UnoState getUnoState() {
         return unoState;
+    }
+
+    @Override
+    public OutputUser getPrivateMessageChannel(String nickname) {
+        return pircBotX.getUserChannelDao().getUser(nickname).send();
+    }
+
+    @Override
+    public PircBotX getBot() {
+        return pircBotX;
     }
 
     public void startGame() {

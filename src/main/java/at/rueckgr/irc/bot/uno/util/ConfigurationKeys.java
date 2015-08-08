@@ -5,4 +5,5 @@ public interface ConfigurationKeys {
     String NETWORK = "network";
     String CHANNEL = "channel";
     String BOT_NAME = "bot_name";
+    String NICKSERV_PASSWORD = "nickserv_password";
 }

@@ -1,5 +1,6 @@
 package at.rueckgr.irc.bot.uno.actions;
 
+import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import org.pircbotx.output.OutputChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ public class ChannelMessageAction implements Action {
     }
 
     @Override
-    public void execute(OutputChannel outputChannel) {
+    public void execute(OutputChannel outputChannel, BotInfoProvider botInfoProvider) {
         logger.debug("Sending message to channel: {}", message);
 
         outputChannel.message(message);
