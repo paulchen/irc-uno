@@ -3,7 +3,6 @@ package at.rueckgr.irc.bot.uno;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
-import org.pircbotx.output.OutputChannel;
 import org.pircbotx.output.OutputUser;
 
 public interface BotInfoProvider {

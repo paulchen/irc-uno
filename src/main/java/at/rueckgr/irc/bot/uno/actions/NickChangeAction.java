@@ -2,7 +2,6 @@ package at.rueckgr.irc.bot.uno.actions;
 
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import org.pircbotx.output.OutputChannel;
-import org.pircbotx.output.OutputUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
