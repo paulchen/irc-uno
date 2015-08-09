@@ -53,7 +53,7 @@ public class UnoHelper {
         return null;
     }
 
-    private static List<Card> findCompatibleCards(List<Card> currentHand, Card currentCard) {
+    public static List<Card> findCompatibleCards(List<Card> currentHand, Card currentCard) {
         List<Card> result = new ArrayList<>();
 
         for (Card card : currentHand) {
@@ -90,7 +90,11 @@ public class UnoHelper {
 
         String cardName;
         if(selectedCard.isWildcard()) {
-            cardName = selectedCard.getCardType().getLongName() + " " + UnoStrategy.getWildcardColor(unoState).getLongName();
+            Color wildcardColor = selectedCard.getColor();
+            if(Color.WILD.equals(wildcardColor)) {
+                wildcardColor = UnoStrategy.getWildcardColor(unoState);
+            }
+            cardName = selectedCard.getCardType().getLongName() + " " + wildcardColor.getLongName();
         }
         else {
             cardName = selectedCard.getLongName();

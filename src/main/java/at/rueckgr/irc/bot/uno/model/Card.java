@@ -14,6 +14,10 @@ public class Card {
     }
 
     public boolean isWildcard() {
-        return Color.WILD.equals(color);
+        return CardType.WILD.equals(cardType) || CardType.WD4.equals(cardType);
+    }
+
+    public String toString() {
+        return getLongName();
     }
 }

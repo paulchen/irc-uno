@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -23,6 +24,8 @@ public class UnoStrategy {
 
     public static Card chooseCard(UnoState unoState, List<Card> compatibleCards, boolean drawingPossible) {
         Validate.notEmpty(compatibleCards);
+
+        logger.debug("Compatible cards: {}", compatibleCards);
 
         Card card = findCard(unoState, compatibleCards, Collections.<CardType>emptyList(), Collections.<CardType>emptyList());
         if(UnoHelper.hasUno(unoState, unoState.getPlayerOrder().get(0))) {
@@ -50,7 +53,7 @@ public class UnoStrategy {
             return null;
         }
 
-        if(card.getCardType().getEvilness() == 0 && panicInfo.isDrawIfPossible()) {
+        if(card.getCardType().getEvilness() == CardType.ZERO.getEvilness() && panicInfo.isDrawIfPossible()) {
             logger.debug("No evil card in current hand, drawing now");
 
             return null;
@@ -77,16 +80,90 @@ public class UnoStrategy {
             return null;
         }
 
-        List<Card> nonWildcards = notForbiddenCards.stream().filter(not(Card::isWildcard)).collect(Collectors.toList());
-        if(!nonWildcards.isEmpty()) {
-            return findMostEvilCard(nonWildcards);
+        List<List<Card>> cardChains = findChains(unoState.getCurrentCard(), unoState.getHand(), 0);
+        logger.debug("Card chains: {}", cardChains);
+
+        List<List<Card>> notForbiddenChains = cardChains.stream().filter(chain -> !forbiddenCards.contains(chain.get(0).getCardType())).collect(Collectors.toList());
+        logger.debug("Not forbidden card chains: {}", notForbiddenChains);
+        if(notForbiddenChains.isEmpty()) {
+            return null;
         }
 
-        if(containsCardType(unoState.getHand(), CardType.WILD)) {
-            return new Card(CardType.WILD, Color.WILD);
+        int longestChainLength = notForbiddenChains.stream().map(List::size).max(Integer::compare).get();
+        logger.debug("Longest chain length: {}", longestChainLength);
+        List<List<Card>> longestChains = notForbiddenChains.stream().filter(chain -> chain.size() == longestChainLength).collect(Collectors.toList());
+        logger.debug("Longest chains: {}", longestChains);
+
+        int mostEvilChain = longestChains.stream().map(UnoStrategy::getEvilness).max(Integer::compare).get();
+        logger.debug("Most evil chain length: {}", mostEvilChain);
+        List<List<Card>> mostEvilChains = longestChains.stream().filter(chain -> getEvilness(chain) == mostEvilChain).collect(Collectors.toList());
+        logger.debug("Most evil chains: {}", mostEvilChains);
+
+        List<Card> actualChain = mostEvilChains.stream().findAny().get();
+        logger.debug("Actual chain: {}", actualChain);
+        return actualChain.get(0);
+    }
+
+    private static List<List<Card>> findChains(Card currentCard, List<Card> hand, int depth) {
+        List<List<Card>> result = new ArrayList<>();
+
+        if(depth > 4) {
+            return result;
         }
 
-        return new Card(CardType.WD4, Color.WILD);
+        if(hand.isEmpty()) {
+            return result;
+        }
+
+        List<Card> compatibleCards = UnoHelper.findCompatibleCards(hand, currentCard);
+        if(compatibleCards.isEmpty()) {
+            return result;
+        }
+
+//        for (Card compatibleCard : compatibleCards) {
+        for (Card compatibleCard : new HashSet<>(compatibleCards)) {
+            List<Card> newHand = new ArrayList<>(hand);
+            newHand.remove(compatibleCard);
+
+            List<Card> cards;
+            if(compatibleCard.isWildcard()) {
+                cards = new ArrayList<>(Color.values().length);
+                boolean added = false;
+                for (Color color : Color.values()) {
+                    if(!color.isWildcard() && containsColor(hand, color)) {
+                        cards.add(new Card(compatibleCard.getCardType(), color));
+                        added = true;
+                    }
+                }
+                if(!added) {
+                    cards.add(new Card(compatibleCard.getCardType(), getRandomColor()));
+                }
+            }
+            else {
+                cards = Collections.singletonList(compatibleCard);
+            }
+
+            for (Card card : cards) {
+                List<List<Card>> newLists = findChains(card, newHand, depth + 1);
+                if (newLists.isEmpty()) {
+                    result.add(Collections.singletonList(card));
+                }
+                else {
+                    for (List<Card> newList : newLists) {
+                        List<Card> list = new ArrayList<>(newList.size() + 1);
+                        list.add(card);
+                        list.addAll(newList);
+                        result.add(list);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static boolean containsColor(List<Card> hand, Color color) {
+        return hand.stream().map(Card::getColor).anyMatch(cardColor -> cardColor.equals(color));
     }
 
     private static Card findMostPreferredCard(List<Card> preferredCompatibleCards, List<CardType> preferredCards) {
@@ -100,27 +177,23 @@ public class UnoStrategy {
         return null;
     }
 
-    private static boolean containsCardType(List<Card> cards, CardType cardType) {
-        return getCardsByType(cards, cardType).size() > 0;
-    }
-
     private static List<Card> getCardsByType(List<Card> cards, CardType cardType) {
         return cards.stream().filter(card -> card.getCardType().equals(cardType)).collect(Collectors.toList());
     }
 
-    private static Card findMostEvilCard(List<Card> cards) {
-        Validate.notEmpty(cards);
+    private static int getEvilness(List<Card> cards) {
+        int evilness = 0;
+        for(int i = 0; i < cards.size(); i++) {
+            Card card = cards.get(i);
+            int posFromEnd = cards.size() - i - 1;
 
-        // TODO isn't there some Java 8 way to do this?
-        Card mostEvilCard = null;
-
-        for (Card card : cards) {
-            if(mostEvilCard == null || card.getCardType().getEvilness() > mostEvilCard.getCardType().getEvilness()) {
-                mostEvilCard = card;
+            int cardEvilness = card.getCardType().getEvilness();
+            if(cardEvilness > 0) {
+                evilness += cardEvilness + posFromEnd;
             }
         }
 
-        return mostEvilCard;
+        return evilness;
     }
 
     public static Color getWildcardColor(UnoState unoState) {
