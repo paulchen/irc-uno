@@ -8,4 +8,5 @@ public interface ConfigurationKeys {
     String NICKSERV_PASSWORD = "nickserv_password";
     String PORT = "port";
     String USE_SSL = "ssl";
+    String PRINCESS_NAME = "princess_name";
 }
