@@ -110,14 +110,14 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>${exec-maven-plugin.version}</version>
-		<configuration>
+                <configuration>
                     <executable>${JAVA_HOME}/bin/java</executable>
                     <mainClass>at.rueckgr.irc.bot.uno.Main</mainClass>
-		    <cleanupDaemonThreads>false</cleanupDaemonThreads>
-		    <arguments>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                    <arguments>
                         <argument>-XX:-UsePerfData</argument>
                         <argument>-classpath</argument>
-			<classpath />
+                        <classpath/>
                         <argument>at.rueckgr.irc.bot.uno.Main</argument>
                     </arguments>
                 </configuration>
