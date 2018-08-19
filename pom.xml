@@ -26,6 +26,7 @@
         <exec-maven-plugin.version>1.4.0</exec-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
         <checkstyle.version>6.1.1</checkstyle.version>
+        <appassembler-maven-plugin.version>2.0.0</appassembler-maven-plugin.version>
 
         <!-- test dependency versions -->
         <testng.version>6.8.8</testng.version>
@@ -104,6 +105,20 @@
                 <configuration>
                     <source>10</source>
                     <target>10</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>${appassembler-maven-plugin.version}</version>
+                <configuration>
+                    <programs>
+                        <program>
+                            <mainClass>at.rueckgr.irc.bot.uno.Main</mainClass>
+                            <name>unobot</name>
+                        </program>
+                    </programs>
                 </configuration>
             </plugin>
 
