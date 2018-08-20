@@ -9,6 +9,7 @@ import at.rueckgr.irc.bot.uno.util.Util;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
+import org.pircbotx.User;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.managers.GenericListenerManager;
 import org.pircbotx.output.OutputChannel;
@@ -155,6 +156,16 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
     }
 
     public void startGame() {
+        if (channel == null) {
+            return;
+        }
+
+        final String botName = getProperty(ConfigurationKeys.BOT_NAME);
+        if (channel.getUsers().stream().map(User::getNick).noneMatch(x -> x.equalsIgnoreCase(botName))) {
+            logger.debug("Bot not present, not starting game");
+            return;
+        }
+
         executeActions(Util.createAutoplayCommands("+a +e"));
     }
 }
