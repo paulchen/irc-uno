@@ -18,6 +18,8 @@ public class ChannelMessageAction implements Action {
     public void execute(OutputChannel outputChannel, BotInfoProvider botInfoProvider) {
         logger.debug("Sending message to channel: {}", message);
 
-        outputChannel.message(message);
+        if (outputChannel != null) {
+            outputChannel.message(message);
+        }
     }
 }
