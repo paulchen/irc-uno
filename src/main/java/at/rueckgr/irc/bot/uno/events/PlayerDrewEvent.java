@@ -6,6 +6,7 @@ import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.actions.ChannelMessageAction;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
+import at.rueckgr.irc.bot.uno.util.UnoCommands;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class PlayerDrewEvent implements Event {
         if(playerCommand == null) {
             logger.debug("Passing to next player");
 
-            return new ChannelMessageAction("!pass");
+            return new ChannelMessageAction(UnoCommands.PASS);
         }
 
         logger.debug("Play command: {}", playerCommand);

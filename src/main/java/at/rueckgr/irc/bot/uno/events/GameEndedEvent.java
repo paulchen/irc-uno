@@ -5,6 +5,7 @@ import at.rueckgr.irc.bot.uno.LogHelper;
 import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.actions.ChannelMessageAction;
 import at.rueckgr.irc.bot.uno.model.UnoState;
+import at.rueckgr.irc.bot.uno.util.UnoCommands;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class GameEndedEvent implements Event {
         logger.debug("Game ended");
 
         if(random.nextInt(10) > 8) {
-            return new ChannelMessageAction("!elo");
+            return new ChannelMessageAction(UnoCommands.ELO);
         }
         return null;
     }

@@ -6,6 +6,7 @@ import at.rueckgr.irc.bot.uno.actions.Action;
 import at.rueckgr.irc.bot.uno.actions.ChannelMessageAction;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
+import at.rueckgr.irc.bot.uno.util.UnoCommands;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ public class CurrentOrderEvent implements Event {
         if(playCommand == null) {
             logger.debug("Drawing a card");
 
-            return new ChannelMessageAction("!draw");
+            return new ChannelMessageAction(UnoCommands.DRAW);
         }
 
         logger.debug("Created play command: {}", playCommand);

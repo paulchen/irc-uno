@@ -6,6 +6,7 @@ import at.rueckgr.irc.bot.uno.model.Color;
 import at.rueckgr.irc.bot.uno.model.PanicInfo;
 import at.rueckgr.irc.bot.uno.model.PanicMode;
 import at.rueckgr.irc.bot.uno.model.UnoState;
+import at.rueckgr.irc.bot.uno.util.UnoCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,10 +82,10 @@ public class UnoHelper {
 
         if(selectedCard == null) {
             if(drawingPossible) {
-                return "!draw";
+                return UnoCommands.DRAW;
             }
             else {
-                return "!pass";
+                return UnoCommands.PASS;
             }
         }
 
@@ -99,7 +100,7 @@ public class UnoHelper {
         else {
             cardName = selectedCard.getLongName();
         }
-        return "!play " + cardName;
+        return UnoCommands.PLAY + " " + cardName;
     }
 
     public static PanicInfo getPanicInfo(UnoState unoState) {

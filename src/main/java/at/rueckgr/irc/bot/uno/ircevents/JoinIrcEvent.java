@@ -2,8 +2,8 @@ package at.rueckgr.irc.bot.uno.ircevents;
 
 import at.rueckgr.irc.bot.uno.BotInfoProvider;
 import at.rueckgr.irc.bot.uno.actions.Action;
-import at.rueckgr.irc.bot.uno.actions.ChannelMessageAction;
 import at.rueckgr.irc.bot.uno.util.ConfigurationKeys;
+import at.rueckgr.irc.bot.uno.util.UnoMode;
 import at.rueckgr.irc.bot.uno.util.Util;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
@@ -39,11 +39,11 @@ public class JoinIrcEvent implements IrcEvent {
 
         final User user = joinEvent.getUser();
         if (botInfoProvider.getProperty(ConfigurationKeys.BOT_NAME).equalsIgnoreCase(user.getNick())) {
-            return Collections.singletonList(new ChannelMessageAction("!ai"));
+            return Util.createInvitePrincessCommands();
         }
 
         if (botInfoProvider.getProperty(ConfigurationKeys.PRINCESS_NAME).equalsIgnoreCase(user.getNick())) {
-            return Util.createAutoplayCommands("+a +e");
+            return Util.createAutoplayCommands(UnoMode.ATTACK, UnoMode.EXTREME);
         }
 
         return Collections.emptyList();

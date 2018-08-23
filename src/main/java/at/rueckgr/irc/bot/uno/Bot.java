@@ -5,6 +5,7 @@ import at.rueckgr.irc.bot.uno.ircevents.IrcEvent;
 import at.rueckgr.irc.bot.uno.model.UnoState;
 import at.rueckgr.irc.bot.uno.util.ConfigurationKeys;
 import at.rueckgr.irc.bot.uno.util.ReflectionsUtil;
+import at.rueckgr.irc.bot.uno.util.UnoMode;
 import at.rueckgr.irc.bot.uno.util.Util;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
@@ -166,6 +167,6 @@ public class Bot implements Listener<PircBotX>, BotInfoProvider {
             return;
         }
 
-        executeActions(Util.createAutoplayCommands("+a +e"));
+        executeActions(Util.createAutoplayCommands(UnoMode.ATTACK, UnoMode.EXTREME));
     }
 }
