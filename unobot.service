@@ -1,0 +1,13 @@
+[Unit]
+Description=unobot
+After=network.target mysql.service postgresql.service
+
+[Service]
+User=paulchen
+ExecStart=/home/paulchen/irc-uno/unobot.sh
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+
