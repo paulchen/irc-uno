@@ -6,7 +6,7 @@ cd "$DIRECTORY"
 git pull || exit 1
 #export JAVA_HOME=/opt/java8
 #export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
-export JAVA_HOME=/opt/jdk10
+export JAVA_HOME=/opt/jdk12
 export MAVEN_HOME=/opt/apache-maven
 export MAVEN_OPTS="-XX:-UsePerfData"
 
