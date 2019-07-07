@@ -23,7 +23,10 @@ public class UserListEvent implements IrcEvent {
         final String princessName = botInfoProvider.getProperty(ConfigurationKeys.PRINCESS_NAME);
 
         if (userListEvent.getUsers().stream().noneMatch(s -> s.getNick().equalsIgnoreCase(princessName))) {
-            return Util.createInvitePrincessCommands();
+            final String botName = botInfoProvider.getProperty(ConfigurationKeys.BOT_NAME);
+            if (userListEvent.getUsers().stream().anyMatch(s -> s.getNick().equalsIgnoreCase(botName))) {
+                return Util.createInvitePrincessCommands();
+            }
         }
 
         return Collections.emptyList();
