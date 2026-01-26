@@ -30,7 +30,7 @@
 
         <!-- test dependency versions -->
         <testng.version>6.8.8</testng.version>
-        <assertj.version>1.7.0</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
     </properties>
 
     <dependencies>
